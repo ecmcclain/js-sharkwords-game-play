@@ -51,6 +51,25 @@ const isLetterInWord = (letter) => document.querySelector(`div.${letter}`) !== n
 //
 const handleCorrectGuess = (letter) => {
   // Replace this with your code
+  const letterDivs = document.querySelectorAll(`.${letter}`);
+  for (const div of letterDivs) {
+    div.innerHTML = `${letter}`;
+  }
+
+  let count = 0;
+  const letterDivs2 = document.querySelectorAll(`div.letter-box`);
+  for (div of letterDivs2) {
+    if (div.innerHTML != ""){
+      count += 1;
+    }
+  }
+  if (count === document.querySelectorAll('div.letter-box').length) {
+    document.querySelector('#win').style.display = '';
+    const youWon = document.querySelector('#win');
+    youWon.addEventListener('click', resetGame);
+  
+  }
+
 };
 
 //
@@ -63,6 +82,13 @@ const handleCorrectGuess = (letter) => {
 const handleWrongGuess = () => {
   numWrong += 1;
   // Replace this with your code
+  if (numWrong === document.querySelectorAll('div.letter-box').length) {
+    const buttons = document.querySelectorAll('button');
+    for (const button of buttons) {
+      disableLetterButton(button);
+    }
+    document.querySelector('#play-again').style.display = '';
+  }
 };
 
 //  Reset game state. Called before restarting the game.
@@ -74,7 +100,8 @@ const resetGame = () => {
 //
 (function startGame() {
   // For now, we'll hardcode the word that the user has to guess.
-  const word = 'hello';
+  const word = WORDS[Math.floor(Math.random() * WORDS.length)];
+  // const word = "hello";
 
   createDivsForChars(word);
   generateLetterButtons();
@@ -82,8 +109,23 @@ const resetGame = () => {
   for (const button of document.querySelectorAll('button')) {
     // add an event handler to handle clicking on a letter button
     // YOUR CODE HERE
+    button.addEventListener('click', (evt) => {
+      const letter = evt.target;
+      disableLetterButton(letter);
+      const div = letter.innerHTML;
+
+      if (isLetterInWord(div)) {
+        handleCorrectGuess(div);
+      } else {
+        handleWrongGuess();
+      }
+    });
+    
   }
 
   // add an event handler to handle clicking on the Play Again button
   // YOUR CODE HERE
+  const playAgain = document.querySelector('#play-again');
+  playAgain.addEventListener('click', resetGame);
+    
 })();
